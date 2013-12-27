@@ -10,7 +10,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import net.kindeditor.util.Constants;
 import net.kindeditor.util.PathGenerator;
 import static net.kindeditor.util.Constants.*;
 
