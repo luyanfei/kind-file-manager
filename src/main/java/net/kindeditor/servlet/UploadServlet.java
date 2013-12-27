@@ -49,22 +49,16 @@ public class UploadServlet extends HttpServlet {
 			return;
 		}
 
-		String saveUrl = config.getProperty(DEST_URL_PREFIX);
-		saveUrl += dirName + "/";
+		String destUrl = config.getProperty(DEST_URL_PREFIX);
+		destUrl += dirName + "/";
 
 		PathGenerator pathGenerator = (PathGenerator) request
 				.getServletContext().getAttribute(SC_PATH_GENERATOR);
 		
 		Collection<Part> parts = request.getParts();
 		for (Part part : parts) {
-			String disposition = part.getHeader("Content-Disposition");
-			if (disposition == null)
-				continue;
-			Matcher matcher = FILENAME_PATTERN.matcher(disposition);
-			if (!matcher.find())
-				continue;
-			String fileName = matcher.group(1);
-
+			String fileName = extractFileName(part);
+			if(fileName == null) continue;
 			// 检查文件大小
 			if (part.getSize() > new Integer(config.getProperty(UPLOAD_SIZE_LIMIT).trim())) {
 				out.println(getError("上传文件大小超过限制。"));
@@ -86,10 +80,25 @@ public class UploadServlet extends HttpServlet {
 
 			JSONObject obj = new JSONObject();
 			obj.put("error", 0);
-			obj.put("url", saveUrl + path);
+			obj.put("url", destUrl + path);
 			out.println(obj.toJSONString());
 
 		}
+	}
+
+	/**
+	 * Extract filename property from Part's Content-Disposition header.
+	 * @param part
+	 * @return the extracted filename value.
+	 */
+	private String extractFileName(Part part) {
+		String disposition = part.getHeader("Content-Disposition");
+		if (disposition == null)
+			return null;
+		Matcher matcher = FILENAME_PATTERN.matcher(disposition);
+		if (!matcher.find())
+			return null;
+		return matcher.group(1);
 	}
 
 	@SuppressWarnings("unchecked")

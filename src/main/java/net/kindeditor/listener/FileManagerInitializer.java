@@ -21,7 +21,7 @@ import static net.kindeditor.util.Constants.*;
  * in ServletContext with the attribute name Constants.SC_KIND_CONFIG, other servlet will need these configuration
  * properties.</li>
  * <li> The directory for upload files will be checked, if it does not exist or cann't be written, a RuntimeException
- * will be thrown. The allowed subdirectories in upload root directory will be checked for existence, these directories
+ * will be thrown. These allowed subdirectories in upload root directory will be checked for existence, and
  * will be created if necessary.</li>
  * <li> PathGenerator object will be created from class name configured in properties file, and this object will be 
  * kept in ServletContext with the attribute name Constants.SC_PATH_GENERATOR.</li>
@@ -121,9 +121,16 @@ public class FileManagerInitializer implements ServletContextListener {
 			String defaultUploadRoot = context.getRealPath("/") + "attached";
 			properties.setProperty(UPLOAD_ROOT, defaultUploadRoot);
 		}
-		if(properties.getProperty(DEST_URL_PREFIX) == null) {
+		String destUrlPrefix = properties.getProperty(DEST_URL_PREFIX);
+		if(destUrlPrefix == null) {
 			String defaultPrefix = context.getContextPath() + "/attached/";
 			properties.setProperty(DEST_URL_PREFIX, defaultPrefix);
+		}
+		else {
+			//make sure prefix end with "/"
+			if(!destUrlPrefix.endsWith("/")) {
+				properties.setProperty(DEST_URL_PREFIX, destUrlPrefix + "/");
+			}
 		}
 		return properties;
 	}
