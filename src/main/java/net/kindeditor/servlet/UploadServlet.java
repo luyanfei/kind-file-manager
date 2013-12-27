@@ -39,7 +39,7 @@ public class UploadServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		Properties config = (Properties) request.getServletContext()
-				.getAttribute(Constants.KIND_CONFIG);
+				.getAttribute(Constants.SC_KIND_CONFIG);
 		
 		response.setContentType("text/html; charset=UTF-8");
 		PrintWriter out = response.getWriter();

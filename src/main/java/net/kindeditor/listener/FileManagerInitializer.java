@@ -5,14 +5,32 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.naming.directory.DirContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import net.kindeditor.util.Constants;
+import net.kindeditor.util.PathGenerator;
 import static net.kindeditor.util.Constants.*;
 
+/**
+ * This is the kind-file-manager's initialize entrance. When ServletContext is initialized, some things will happen:
+ * <ol>
+ * <li> A properties file named "kindmanager.properties" will be searched in classpath, configuration properties
+ * in this file will be merged with default configuration properties. The Properties object will be kept
+ * in ServletContext with the attribute name Constants.SC_KIND_CONFIG, other servlet will need these configuration
+ * properties.</li>
+ * <li> The directory for upload files will be checked, if it does not exist or cann't be written, a RuntimeException
+ * will be thrown. The allowed subdirectories in upload root directory will be checked for existence, these directories
+ * will be created if necessary.</li>
+ * <li> PathGenerator object will be created from class name configured in properties file, and this object will be 
+ * kept in ServletContext with the attribute name Constants.SC_PATH_GENERATOR.</li>
+ * </ol>
+ * @author luyanfei
+ * @see net.kindeditor.util.Constants#SC_KIND_CONFIG
+ * @see net.kindeditor.util.Constants#SC_PATH_GENERATOR
+ */
 
 @WebListener
 public class FileManagerInitializer implements ServletContextListener {
@@ -23,22 +41,55 @@ public class FileManagerInitializer implements ServletContextListener {
 		Properties properties = readFromConfigFile(context);
 		//for test
 		properties.list(System.err);
-		context.setAttribute(KIND_CONFIG, properties);
+		context.setAttribute(SC_KIND_CONFIG, properties);
 		checkUploadDirectories(properties);
+		PathGenerator pathGenerator = populatePathGenerator(properties);
+		context.setAttribute(SC_PATH_GENERATOR, pathGenerator);
+	}
+
+	private PathGenerator populatePathGenerator(Properties properties) {
+		String className = properties.getProperty(PATH_GENERATOR);
+		className = className == null ? DEFAULT_PATH_GENERATOR_CLASS : className;
+		
+		Class<?> clazz = null;
+		try {
+			clazz = Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		//check whether this class implemented PathGenerator interface 
+		boolean foundInterface = false;
+		for(Class<?> clz : clazz.getInterfaces()) {
+			if(PathGenerator.class.isAssignableFrom(clz)) {
+				foundInterface = true;
+				break;
+			}
+		}
+		if(!foundInterface)
+			throw new RuntimeException("Cann't assign to PathGenerator interface, "
+					+ "the " + PATH_GENERATOR + " in configure file is wrong.");
+		PathGenerator pathGenerator = null;
+		try {
+			pathGenerator = (PathGenerator)clazz.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+		return pathGenerator;
 	}
 
 	private void checkUploadDirectories(Properties properties) {
 		String root = properties.getProperty(UPLOAD_ROOT);
-		if(!root.endsWith("/"))
-			root += "/";
+		if(!root.endsWith(File.separator))
+			root += File.separator;
 		File rootDir = new File(root);
-		if(!rootDir.isAbsolute() || !rootDir.canWrite())
+		rootDir.mkdir();
+		if(!rootDir.isAbsolute() || !rootDir.exists() || !rootDir.canWrite())
 			throw new RuntimeException("Upload root directory: " + root + "does not exists or can not be written.");
 		//create allowed dirs
 		String[] allowedDirs = properties.getProperty(ALLOWED_DIRS).split(",");
 		for(String dir : allowedDirs) {
-			File t = new File(root + dir);
-			t.mkdir();
+			File t = new File(rootDir, dir);
+			if(!t.exists()) t.mkdir();
 		}
 	}
 
@@ -68,7 +119,7 @@ public class FileManagerInitializer implements ServletContextListener {
 		}
 
 		if(properties.getProperty(UPLOAD_ROOT) == null) {
-			String defaultUploadRoot = context.getRealPath("/") + "attached/";
+			String defaultUploadRoot = context.getRealPath("/") + "attached";
 			properties.setProperty(UPLOAD_ROOT, defaultUploadRoot);
 		}
 		if(properties.getProperty(DEST_URL_PREFIX) == null) {

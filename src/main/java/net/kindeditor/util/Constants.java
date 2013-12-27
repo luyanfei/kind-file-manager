@@ -1,10 +1,20 @@
 package net.kindeditor.util;
 
-
+/**
+ * Constants used in kind-file-manager, most of them are configure file's property names.
+ * @author luyanfei
+ *
+ */
 public interface Constants {
 
-	//attribute name in ServletContext for Properties object.
-	public static final String KIND_CONFIG = "KIND_CONFIG";
+	/**
+	 * Attribute name in ServletContext used for keep configure Properties object.
+	 */
+	public static final String SC_KIND_CONFIG = "king_config";
+	/**
+	 * Attribute name in ServletContex used for keep PathGenerator Object.
+	 */
+	public static final String SC_PATH_GENERATOR = "kind_path_generator";
 	
 	//property names of the config file
 	public static final String UPLOAD_ROOT = "upload_root";
@@ -19,9 +29,14 @@ public interface Constants {
 	public static final String FILE_DIR_EXT = "file_dir_ext";
 	public static final String ALLOWED_DIRS = "allowed_dirs";
 	/**
-	 * after upload successed, server should return uploaded file's reference url,
+	 * After upload successed, server should return uploaded file's reference url,
 	 * this property is used for config url prefix.
 	 */
 	public static final String DEST_URL_PREFIX = "dest_url_prefix";
+	/**
+	 * Configure file's property, the value will be class name of the implemented PathGenerator.
+	 */
+	public static final String PATH_GENERATOR = "path_generator";
+	public static final String DEFAULT_PATH_GENERATOR_CLASS = "net.kindeditor.util.DateBasedPathGenerator";
 
 }
