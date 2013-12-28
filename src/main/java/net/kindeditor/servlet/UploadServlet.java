@@ -45,7 +45,7 @@ public class UploadServlet extends HttpServlet {
 		File subDirectory = new File(uploadRoot,
 				dirName == null ? DEFAULT_SUBDIRECTORY : dirName);
 		if (!subDirectory.exists()) {
-			out.println(getError("目录名不正确。"));
+			out.println(buildErrorMessage("目录名不正确。"));
 			return;
 		}
 
@@ -61,7 +61,7 @@ public class UploadServlet extends HttpServlet {
 			if(fileName == null) continue;
 			// 检查文件大小
 			if (part.getSize() > new Integer(config.getProperty(UPLOAD_SIZE_LIMIT).trim())) {
-				out.println(getError("上传文件大小超过限制。"));
+				out.println(buildErrorMessage("上传文件大小超过限制。"));
 				return;
 			}
 			// 检查扩展名
@@ -102,7 +102,7 @@ public class UploadServlet extends HttpServlet {
 	}
 
 	@SuppressWarnings("unchecked")
-	private String getError(String message) {
+	private String buildErrorMessage(String message) {
 		JSONObject obj = new JSONObject();
 		obj.put("error", 1);
 		obj.put("message", message);

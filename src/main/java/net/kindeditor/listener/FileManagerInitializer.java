@@ -117,10 +117,17 @@ public class FileManagerInitializer implements ServletContextListener {
 			}
 		}
 
-		if(properties.getProperty(UPLOAD_ROOT) == null) {
-			String defaultUploadRoot = context.getRealPath("/") + "attached";
+		String uploadRoot = properties.getProperty(UPLOAD_ROOT);
+		if( uploadRoot == null) {
+			String defaultUploadRoot = context.getRealPath("/") + "attached/";
 			properties.setProperty(UPLOAD_ROOT, defaultUploadRoot);
 		}
+		else {
+			//make sure upload root is ended with "/"
+			if(!uploadRoot.endsWith("/"))
+				properties.setProperty(UPLOAD_ROOT, uploadRoot + "/");
+		}
+		
 		String destUrlPrefix = properties.getProperty(DEST_URL_PREFIX);
 		if(destUrlPrefix == null) {
 			String defaultPrefix = context.getContextPath() + "/attached/";
