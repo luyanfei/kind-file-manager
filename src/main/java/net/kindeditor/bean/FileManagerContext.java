@@ -1,7 +1,13 @@
 package net.kindeditor.bean;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+
+import net.kindeditor.util.FileItemComparator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,6 +18,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class FileManagerContext {
+	@JsonIgnore
+	private static final List<String> IMG_EXTS = Arrays.asList("gif", "jpg", "jpeg", "png", "bmp");
+	
 	@JsonProperty("current_url")
 	private String currentUrl;
 	@JsonProperty("current_dir_path")
@@ -19,12 +28,19 @@ public class FileManagerContext {
 	@JsonProperty("moveup_dir_path")
 	private String moveupDirPath;
 	@JsonProperty("file_list")
-	private List<FileItem> fileList;
+	private List<FileItem> fileList = new ArrayList<FileItem>();
 	@JsonProperty("total_count")
 	private int tocalCount;
 
 	@JsonIgnore
 	private File currentDir;
+
+	@JsonIgnore
+	private static final FileItemComparator.SizeComparator sizeComparator = new FileItemComparator.SizeComparator();
+	@JsonIgnore
+	private static final FileItemComparator.TypeComparator typeComparator = new FileItemComparator.TypeComparator();
+	@JsonIgnore
+	private static final FileItemComparator.NameComparator nameComparator = new FileItemComparator.NameComparator();
 	
 	public FileManagerContext(String rootPath, String urlPrefix, String path) {
 		super();
@@ -55,10 +71,44 @@ public class FileManagerContext {
 		}
 		
 		initFileList(currentDir);
+		this.tocalCount = fileList.size();
 	}
 
 	private void initFileList(File dir) {
-		
+		for(File file : dir.listFiles()) {
+			FileItem item = new FileItem();
+			String name = file.getName();
+			item.setFileName(name);
+			item.setDateTime(new Date(file.lastModified()));
+			if(file.isDirectory()) {
+				item.setDir(true);
+				item.setHasFile(file.listFiles() != null);
+				item.setFileSize(0L);
+				item.setPhoto(false);
+				item.setFileType("");
+			}
+			else {
+				item.setDir(false);
+				item.setHasFile(false);
+				item.setFileSize(file.length());
+				String ext = name.substring(name.lastIndexOf(".") + 1).toLowerCase();
+				item.setPhoto(IMG_EXTS.contains(ext));
+				item.setFileType(ext);
+			}
+			fileList.add(item);
+		}
+	}
+	
+	public void sortFileList(String order) {
+		if("size".equals(order)) {
+			Collections.sort(fileList, sizeComparator);
+		}
+		else if("type".equals(order)) {
+			Collections.sort(fileList, typeComparator);
+		}
+		else {
+			Collections.sort(fileList, nameComparator);
+		}
 	}
 
 	public String getCurrentUrl() {

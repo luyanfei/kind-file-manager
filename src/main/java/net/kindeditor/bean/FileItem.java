@@ -2,19 +2,23 @@ package net.kindeditor.bean;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
 /**
  * Represent file or directory in kind editor. This class is used to generate json response to kind editor.
  * @author luyanfei
  *
  */
+@JsonAutoDetect(fieldVisibility=Visibility.NONE,getterVisibility=Visibility.NONE,
+	setterVisibility=Visibility.NONE,creatorVisibility=Visibility.NONE,isGetterVisibility=Visibility.NONE)
 public class FileItem {
 
 	@JsonProperty("filename")
 	private String fileName;
 	@JsonProperty("filesize")
-	private int fileSize;
+	private long fileSize;
 	@JsonProperty("filetype")
 	private String fileType;
 	@JsonProperty("has_file")
@@ -32,10 +36,10 @@ public class FileItem {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-	public int getFileSize() {
+	public long getFileSize() {
 		return fileSize;
 	}
-	public void setFileSize(int fileSize) {
+	public void setFileSize(long fileSize) {
 		this.fileSize = fileSize;
 	}
 	public String getFileType() {
