@@ -40,16 +40,17 @@ public class FileManagerServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 
 		String dirName = request.getParameter("dir");
-		if (dirName != null) {
-			File saveDirFile = new File(rootPath, dirName);
-			if(!saveDirFile.exists()){
-				out.println("Invalid Directory name.");
-				return;
-			}
-		}
-		//根据path参数，设置各路径和URL
+		
 		String path = request.getParameter("path");
-		path = path != null ? path : "";
+
+		
+		//排序形式，name or size or type
+		String order = request.getParameter("order");
+		order = order != null ? order.toLowerCase() : "name";
+		
+		checkRequestParameters(rootPath, dirName, path, order);
+
+		//根据path参数，设置各路径和URL
 		String currentPath = rootPath + path;
 		String currentUrl = rootUrl + path;
 		String currentDirPath = path;
@@ -59,20 +60,6 @@ public class FileManagerServlet extends HttpServlet {
 			moveupDirPath = str.lastIndexOf("/") >= 0 ? str.substring(0, str.lastIndexOf("/") + 1) : "";
 		}
 
-		//排序形式，name or size or type
-		String order = request.getParameter("order");
-		order = order != null ? order.toLowerCase() : "name";
-
-		//不允许使用..移动到上一级目录
-		if (path.indexOf("..") >= 0) {
-			out.println("Access is not allowed.");
-			return;
-		}
-		//最后一个字符不是/
-		if (!"".equals(path) && !path.endsWith("/")) {
-			out.println("Parameter is not valid.");
-			return;
-		}
 		//目录不存在或不是目录
 		File currentPathFile = new File(currentPath);
 		if(!currentPathFile.isDirectory()){
@@ -122,6 +109,17 @@ public class FileManagerServlet extends HttpServlet {
 
 		response.setContentType("application/json; charset=UTF-8");
 		out.println(result.toJSONString());
+	}
+	
+	private void checkRequestParameters(String rootPath, String dirName, String path, String order)
+		throws ServletException{
+		if (dirName != null) {
+			File saveDirFile = new File(rootPath, dirName);
+			if(!saveDirFile.exists()){
+				throw new ServletException("Invalid Directory name.");
+			}
+		}
+
 	}
 	
 	public class NameComparator implements Comparator {

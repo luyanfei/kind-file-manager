@@ -70,7 +70,9 @@ public class FileManagerInitializer implements ServletContextListener {
 		PathGenerator pathGenerator = null;
 		try {
 			pathGenerator = (PathGenerator)clazz.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 		return pathGenerator;

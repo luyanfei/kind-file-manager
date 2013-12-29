@@ -45,7 +45,7 @@ public class UploadServlet extends HttpServlet {
 		File subDirectory = new File(uploadRoot,
 				dirName == null ? DEFAULT_SUBDIRECTORY : dirName);
 		if (!subDirectory.exists()) {
-			out.println(buildErrorMessage("目录名不正确。"));
+			out.println(buildErrorMessage("dir is wrong."));
 			return;
 		}
 
@@ -61,7 +61,7 @@ public class UploadServlet extends HttpServlet {
 			if(fileName == null) continue;
 			// 检查文件大小
 			if (part.getSize() > new Integer(config.getProperty(UPLOAD_SIZE_LIMIT).trim())) {
-				out.println(buildErrorMessage("上传文件大小超过限制。"));
+				out.println(buildErrorMessage("Upload size limit exceeded."));
 				return;
 			}
 			// 检查扩展名
