@@ -25,13 +25,13 @@ public class ConstraintChecker {
 
 	public ConstraintChecker(Properties properties) {
 		String imgExts = properties.getProperty(IMG_DIR_EXT);
-		extsMap.put(IMG_DIR, Arrays.asList(imgExts.split(",")));
+		extsMap.put(properties.getProperty(IMG_DIR), Arrays.asList(imgExts.split(",")));
 		String fileExts = properties.getProperty(FILE_DIR_EXT);
-		extsMap.put(FILE_DIR, Arrays.asList(fileExts.split(",")));
+		extsMap.put(properties.getProperty(FILE_DIR), Arrays.asList(fileExts.split(",")));
 		String mediaExts = properties.getProperty(FILE_DIR_EXT);
-		extsMap.put(MEDIA_DIR, Arrays.asList(mediaExts.split(",")));
+		extsMap.put(properties.getProperty(MEDIA_DIR), Arrays.asList(mediaExts.split(",")));
 		String flashExts = properties.getProperty(FLASH_DIR_EXT);
-		extsMap.put(FLASH_DIR, Arrays.asList(flashExts.split(",")));
+		extsMap.put(properties.getProperty(FLASH_DIR), Arrays.asList(flashExts.split(",")));
 		SIZE_LIMIT = new Long(properties.getProperty(UPLOAD_SIZE_LIMIT));
 	}
 
@@ -53,6 +53,6 @@ public class ConstraintChecker {
 		if(subdir == null || ext == null)
 			return false;
 		List<String> exts = extsMap.get(subdir);
-		return exts == null ? false : exts.contains(exts);
+		return exts == null ? false : exts.contains(ext);
 	}
 }

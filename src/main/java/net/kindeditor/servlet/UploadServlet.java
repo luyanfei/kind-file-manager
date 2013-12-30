@@ -21,8 +21,6 @@ import net.kindeditor.util.ConstraintChecker;
 import net.kindeditor.util.Constants;
 import net.kindeditor.util.PathGenerator;
 
-import org.json.simple.JSONObject;
-
 import static net.kindeditor.util.Constants.*;
 
 @WebServlet(urlPatterns = "/kindeditor/upload.do")
@@ -79,10 +77,7 @@ public class UploadServlet extends HttpServlet {
 			
 			part.write(subDirectory.getAbsolutePath() + File.separator + path);
 
-			JSONObject obj = new JSONObject();
-			obj.put("error", 0);
-			obj.put("url", destUrl + path);
-			out.println(obj.toJSONString());
+			out.println(buildSuccessMessage(destUrl +path));
 
 		}
 	}
@@ -102,11 +97,11 @@ public class UploadServlet extends HttpServlet {
 		return matcher.group(1);
 	}
 
-	@SuppressWarnings("unchecked")
+	private String buildSuccessMessage(String url) {
+		return "{\"error\":0,\"url\":\"" + url+ "\"}";
+	}
+	
 	private String buildErrorMessage(String message) {
-		JSONObject obj = new JSONObject();
-		obj.put("error", 1);
-		obj.put("message", message);
-		return obj.toJSONString();
+		return "{\"error\":1,\"message\":\"" + message + "\"}";
 	}
 }
