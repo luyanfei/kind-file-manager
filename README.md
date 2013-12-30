@@ -3,6 +3,10 @@ kind-file-manager
 
 KindEditor(http://kindeditor.org/) is a lightweight, Open Source(LGPL), cross browser, web based WYSIWYG HTML editor. kind-file-manager is the upload manager and file manager for kindeditor, it use Servlet 3.0 techonology, and can be deployed as a single web fragment jar. 
 
+## Requirement
+1. Java 1.6.0+
+2. Servlet 3.0+
+
 ## Maven
 
 ## Usage
