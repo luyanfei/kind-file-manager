@@ -11,7 +11,7 @@ Put a property file in classpath of you web project, like code below:
 upload_root=/tmp
 upload_size_limit=5242880
 ```
-If you have added dependency in pom.xml, then kink editor is ok to be use in jsp file. Add these code in jsp file (in root of the web content):
+If you have added dependency in pom.xml, then kind editor is ok to be use in jsp file. Add these code in jsp file (in root of the web content):
 ```
 	<link rel="stylesheet" href="kindeditor/themes/default/default.css" />
 	<link rel="stylesheet" href="kindeditor/plugins/code/prettify.css" />
