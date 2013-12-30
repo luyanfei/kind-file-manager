@@ -100,6 +100,7 @@ public class FileManagerContext {
 	}
 	
 	public void sortFileList(String order) {
+		order = order != null ? order.toLowerCase() : "name";
 		if("size".equals(order)) {
 			Collections.sort(fileList, sizeComparator);
 		}

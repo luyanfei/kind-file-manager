@@ -3,6 +3,7 @@ package net.kindeditor.listener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -10,6 +11,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.kindeditor.util.ConstraintChecker;
 import net.kindeditor.util.PathGenerator;
 import static net.kindeditor.util.Constants.*;
 
@@ -18,22 +22,25 @@ import static net.kindeditor.util.Constants.*;
  * <ol>
  * <li> A properties file named "kindmanager.properties" will be searched in classpath, configuration properties
  * in this file will be merged with default configuration properties. The Properties object will be kept
- * in ServletContext with the attribute name Constants.SC_KIND_CONFIG, other servlet will need these configuration
+ * in ServletContext with the attribute name {@link Constants.SC_KIND_CONFIG}, other servlet will need these configuration
  * properties.</li>
  * <li> The directory for upload files will be checked, if it does not exist or cann't be written, a RuntimeException
  * will be thrown. These allowed subdirectories in upload root directory will be checked for existence, and
  * will be created if necessary.</li>
  * <li> PathGenerator object will be created from class name configured in properties file, and this object will be 
- * kept in ServletContext with the attribute name Constants.SC_PATH_GENERATOR.</li>
+ * kept in ServletContext with the attribute name {@link Constants.SC_PATH_GENERATOR}.</li>
+ * <li> A Jackson ObjectMapper object will be initialized, and this object will be kept in ServletContext with the 
+ * attribute name {@link Constants.SC_OBJECT_MAPPER}.</li>
  * </ol>
  * @author luyanfei
- * @see net.kindeditor.util.Constants#SC_KIND_CONFIG
- * @see net.kindeditor.util.Constants#SC_PATH_GENERATOR
+ * @see net.kindeditor.util.Constants
  */
 
 @WebListener
 public class FileManagerInitializer implements ServletContextListener {
-
+	
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		ServletContext context = sce.getServletContext();
@@ -42,11 +49,18 @@ public class FileManagerInitializer implements ServletContextListener {
 		properties.list(System.err);
 		context.setAttribute(SC_KIND_CONFIG, properties);
 		checkUploadDirectories(properties);
-		PathGenerator pathGenerator = populatePathGenerator(properties);
+		PathGenerator pathGenerator = loadPathGenerator(properties);
 		context.setAttribute(SC_PATH_GENERATOR, pathGenerator);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setDateFormat(DATE_FORMAT);
+		context.setAttribute(SC_OBJECT_MAPPER, mapper);
+		
+		ConstraintChecker checker = new ConstraintChecker(properties);
+		context.setAttribute(SC_CONSTRAINT_CHECKER, checker);
 	}
 
-	private PathGenerator populatePathGenerator(Properties properties) {
+	private PathGenerator loadPathGenerator(Properties properties) {
 		String className = properties.getProperty(PATH_GENERATOR);
 		className = className == null ? DEFAULT_PATH_GENERATOR_CLASS : className;
 		

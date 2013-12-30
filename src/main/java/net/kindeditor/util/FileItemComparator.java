@@ -4,6 +4,11 @@ import java.util.Comparator;
 
 import net.kindeditor.bean.FileItem;
 
+/**
+ * Note: all these comparator class have natural ordering that are inconsistent with equals.
+ * @author luyanfei
+ *
+ */
 public class FileItemComparator {
 
 	public static final class SizeComparator implements Comparator<FileItem> {

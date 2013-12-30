@@ -12,9 +12,18 @@ public interface Constants {
 	 */
 	public static final String SC_KIND_CONFIG = "king_config";
 	/**
-	 * Attribute name in ServletContex used for keep PathGenerator Object.
+	 * Attribute name in ServletContext used for keep {@link PathGenerator} object.
 	 */
 	public static final String SC_PATH_GENERATOR = "kind_path_generator";
+	/**
+	 * Attribute name in ServletContext used for keep Json ObjectMapper object.
+	 */
+	public static final String SC_OBJECT_MAPPER = "json_object_mapper";
+	/**
+	 * Attribute name in ServletContext used for keep {@link ConstraintChecker} object. 
+	 * The object is used for check filename extensions, upload size limit, etc.
+	 */
+	public static final String SC_CONSTRAINT_CHECKER = "constraint_checker";
 	
 	//property names of the config file
 	public static final String UPLOAD_ROOT = "upload_root";

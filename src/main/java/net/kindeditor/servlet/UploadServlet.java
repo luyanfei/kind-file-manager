@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import net.kindeditor.util.ConstraintChecker;
 import net.kindeditor.util.Constants;
 import net.kindeditor.util.PathGenerator;
 
@@ -27,7 +29,7 @@ import static net.kindeditor.util.Constants.*;
 @MultipartConfig
 public class UploadServlet extends HttpServlet {
 
-	private static final String DEFAULT_SUBDIRECTORY = "image";
+	private static final long serialVersionUID = 1L;
 	private static final Pattern FILENAME_PATTERN = Pattern
 			.compile("filename=\"([^\" ]+)\"");
 
@@ -37,36 +39,35 @@ public class UploadServlet extends HttpServlet {
 		response.setContentType("text/html; charset=UTF-8");
 		PrintWriter out = response.getWriter();
 
-		Properties config = (Properties) request.getServletContext()
-				.getAttribute(Constants.SC_KIND_CONFIG);
+		final ServletContext servletContext = request.getServletContext();
+		Properties config = (Properties) servletContext.getAttribute(Constants.SC_KIND_CONFIG);
 		String uploadRoot = config.getProperty(UPLOAD_ROOT);
 
-		String dirName = request.getParameter("dir");
-		File subDirectory = new File(uploadRoot,
-				dirName == null ? DEFAULT_SUBDIRECTORY : dirName);
-		if (!subDirectory.exists()) {
-			out.println(buildErrorMessage("dir is wrong."));
-			return;
-		}
+		String subdir = request.getParameter("dir");
+		ConstraintChecker checker = (ConstraintChecker)servletContext.getAttribute(SC_CONSTRAINT_CHECKER);
+		File subDirectory = checker.checkSubDirectory(uploadRoot, subdir);
 
 		String destUrl = config.getProperty(DEST_URL_PREFIX);
-		destUrl += dirName + "/";
+		destUrl += subdir + "/";
 
-		PathGenerator pathGenerator = (PathGenerator) request
-				.getServletContext().getAttribute(SC_PATH_GENERATOR);
+		PathGenerator pathGenerator = (PathGenerator) servletContext.getAttribute(SC_PATH_GENERATOR);
 		
 		Collection<Part> parts = request.getParts();
 		for (Part part : parts) {
 			String fileName = extractFileName(part);
 			if(fileName == null) continue;
 			// 检查文件大小
-			if (part.getSize() > new Integer(config.getProperty(UPLOAD_SIZE_LIMIT).trim())) {
+			if (!checker.checkSizeLimit(part.getSize())) {
 				out.println(buildErrorMessage("Upload size limit exceeded."));
 				return;
 			}
 			// 检查扩展名
 			String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1)
 					.toLowerCase();
+			if( !checker.checkFileExtension(subdir, fileExt) ) {
+				out.println(buildErrorMessage("File extension constraint violated."));
+				return;
+			}
 
 			String path = pathGenerator.generate(request, fileName);
 			int last = path.lastIndexOf(File.separator);
