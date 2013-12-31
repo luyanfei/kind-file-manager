@@ -3,6 +3,7 @@ package net.kindeditor.servlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -48,15 +49,20 @@ public class UploadServlet extends HttpServlet {
 		
 		ResourceBundle bundle = ResourceBundle.getBundle("messages", request.getLocale());
 		
-		Collection<Part> parts = request.getParts();
+		Collection<Part> parts = null;
+		try {
+			parts = request.getParts();
+		} catch (IllegalStateException e) {
+			String pattern = bundle.getString(MSG_UPLOAD_EXCEEDED);
+			out.println(buildErrorMessage(
+					MessageFormat.format(pattern, 
+							config.getProperty(HUMAN_UPLOAD_FILE_SIZE_LIMIT),
+							config.getProperty(HUMAN_REQUEST_SIZE_LIMIT))));
+			return;
+		}
 		for (Part part : parts) {
 			String fileName = extractFileName(part);
 			if(fileName == null) continue;
-			// 检查文件大小
-			if (!checker.checkSizeLimit(part.getSize())) {
-				out.println(buildErrorMessage(bundle.getString(MSG_UPLOAD_EXCEEDED)));
-				return;
-			}
 			// 检查扩展名
 			String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1)
 					.toLowerCase();

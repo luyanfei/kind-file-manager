@@ -49,6 +49,7 @@ public class FileManagerInitializer implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent sce) {
 		ServletContext context = sce.getServletContext();
 		Properties properties = readFromConfigFile(context);
+		computeHumanReadableSizeLimit(properties);
 		//for test
 		properties.list(System.err);
 		context.setAttribute(SC_KIND_CONFIG, properties);
@@ -64,6 +65,29 @@ public class FileManagerInitializer implements ServletContextListener {
 		context.setAttribute(SC_CONSTRAINT_CHECKER, checker);
 		
 		initServlets(context, properties);
+	}
+
+	private void computeHumanReadableSizeLimit(Properties properties) {
+		long maxFileSize = new Long(properties.getProperty(UPLOAD_FILE_SIZE_LIMIT));
+		properties.setProperty(HUMAN_UPLOAD_FILE_SIZE_LIMIT, toHumanReadable(maxFileSize));
+		long maxRequestSize = new Long(properties.getProperty(UPLOAD_REQUEST_SIZE_LIMIT));
+		properties.setProperty(HUMAN_REQUEST_SIZE_LIMIT, toHumanReadable(maxRequestSize));
+	}
+
+	private String toHumanReadable(long sizeOfBytes) {
+		long kb = 0;
+		if(sizeOfBytes<1024)
+			return sizeOfBytes + "B";
+		else {
+			kb = sizeOfBytes / 1024;
+			if(kb<1024) {
+				return kb + "KB";
+			}
+			else {
+				long mb = kb / 1024;
+				return mb + "MB";
+			}
+		}
 	}
 
 	private void initServlets(ServletContext context, Properties properties) {

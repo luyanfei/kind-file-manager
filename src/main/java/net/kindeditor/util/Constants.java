@@ -43,6 +43,16 @@ public interface Constants {
 	public static final String FILE_DIR_EXT = "file_dir_ext";
 	public static final String ALLOWED_DIRS = "allowed_dirs";
 	/**
+	 * Human readable file size limit, not configurable, but saved in properties object. 
+	 * @see FileManagerInitializer
+	 */
+	public static final String HUMAN_UPLOAD_FILE_SIZE_LIMIT = "human_upload_file_size_limit";
+	/**
+	 * Human readable request size limit, not configurable, but saved in properties object. 
+	 * @see FileManagerInitializer
+	 */
+	public static final String HUMAN_REQUEST_SIZE_LIMIT = "human_upload_request_size_limit";
+	/**
 	 * After upload successed, server should return uploaded file's reference url,
 	 * this property is used for config url prefix.
 	 */
