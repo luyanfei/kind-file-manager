@@ -10,7 +10,7 @@ KindEditor(http://kindeditor.org/) is a lightweight, Open Source(LGPL), cross br
 ## Maven
 
 ## Usage
-Put a property file in classpath of you web project, like code below:
+Put a property file named "kindmanager.properties" in classpath of you web project, like code below:
 ```
 upload_root=/tmp
 upload_size_limit=5242880
