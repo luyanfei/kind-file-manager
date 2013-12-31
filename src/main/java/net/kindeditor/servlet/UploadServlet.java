@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,8 +21,6 @@ import net.kindeditor.util.ConstraintChecker;
 import net.kindeditor.util.Constants;
 import static net.kindeditor.util.Constants.*;
 
-@WebServlet(urlPatterns = "/kindeditor/upload.do")
-@MultipartConfig
 public class UploadServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

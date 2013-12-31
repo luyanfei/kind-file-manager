@@ -6,14 +6,18 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebListener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.kindeditor.generator.PathGenerator;
+import net.kindeditor.servlet.FileManagerServlet;
+import net.kindeditor.servlet.UploadServlet;
 import net.kindeditor.util.ConstraintChecker;
 import static net.kindeditor.util.Constants.*;
 
@@ -58,6 +62,20 @@ public class FileManagerInitializer implements ServletContextListener {
 		
 		ConstraintChecker checker = new ConstraintChecker(properties);
 		context.setAttribute(SC_CONSTRAINT_CHECKER, checker);
+		
+		initServlets(context, properties);
+	}
+
+	private void initServlets(ServletContext context, Properties properties) {
+		ServletRegistration.Dynamic uploadDynamic = context.addServlet("uploadServlet", UploadServlet.class);
+		uploadDynamic.addMapping(properties.getProperty(UPLOAD_SERVLET_URL));
+		long maxFileSize = new Long(properties.getProperty(UPLOAD_FILE_SIZE_LIMIT));
+		long maxRequestSize = new Long(properties.getProperty(UPLOAD_REQUEST_SIZE_LIMIT));
+		MultipartConfigElement mce = new MultipartConfigElement("", maxFileSize, maxRequestSize, 0);
+		uploadDynamic.setMultipartConfig(mce);
+		
+		ServletRegistration.Dynamic fileManagerDynamic = context.addServlet("fileManagerServlet", FileManagerServlet.class);
+		fileManagerDynamic.addMapping(properties.getProperty(FILE_MANAGER_SERVLET_URL));
 	}
 
 	private PathGenerator loadPathGenerator(Properties properties) {

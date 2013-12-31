@@ -28,8 +28,11 @@ public interface Constants {
 	public static final String SC_CONSTRAINT_CHECKER = "constraint_checker";
 	
 	//property names of the config file
+	public static final String UPLOAD_SERVLET_URL = "upload_servlet_url";
+	public static final String FILE_MANAGER_SERVLET_URL = "file_manager_servlet_url";
 	public static final String UPLOAD_ROOT = "upload_root";
-	public static final String UPLOAD_SIZE_LIMIT = "upload_size_limit";
+	public static final String UPLOAD_FILE_SIZE_LIMIT = "upload_file_size_limit";
+	public static final String UPLOAD_REQUEST_SIZE_LIMIT = "upload_request_size_limit";
 	public static final String IMG_DIR = "img_dir";
 	public static final String IMG_DIR_EXT = "img_dir_ext";
 	public static final String FLASH_DIR = "flash_dir";

@@ -32,7 +32,7 @@ public class ConstraintChecker {
 		extsMap.put(properties.getProperty(MEDIA_DIR), Arrays.asList(mediaExts.split(",")));
 		String flashExts = properties.getProperty(FLASH_DIR_EXT);
 		extsMap.put(properties.getProperty(FLASH_DIR), Arrays.asList(flashExts.split(",")));
-		SIZE_LIMIT = new Long(properties.getProperty(UPLOAD_SIZE_LIMIT));
+		SIZE_LIMIT = new Long(properties.getProperty(UPLOAD_FILE_SIZE_LIMIT));
 	}
 
 	public File checkSubDirectory(String rootPath, String subdir)
