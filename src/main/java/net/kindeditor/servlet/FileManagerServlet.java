@@ -31,6 +31,7 @@ public class FileManagerServlet extends HttpServlet {
 		String rootPath = config.getProperty(UPLOAD_ROOT);
 		String rootUrl  = config.getProperty(DEST_URL_PREFIX);
 		
+		response.setContentType("application/json; charset=UTF-8");
 		PrintWriter out = response.getWriter();
 
 		String subdir = request.getParameter("dir");
@@ -41,7 +42,7 @@ public class FileManagerServlet extends HttpServlet {
 		ConstraintChecker checker = (ConstraintChecker)context.getAttribute(SC_CONSTRAINT_CHECKER);
 		checker.checkSubDirectory(rootPath, subdir);
 
-		response.setContentType("application/json; charset=UTF-8");
+
 		FileManagerContext fmc = new FileManagerContext(rootPath, rootUrl, path);
 		fmc.sortFileList(order);
 		ObjectMapper mapper = (ObjectMapper)context.getAttribute(SC_OBJECT_MAPPER);

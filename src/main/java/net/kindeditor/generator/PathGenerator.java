@@ -1,4 +1,4 @@
-package net.kindeditor.util;
+package net.kindeditor.generator;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -1,5 +1,7 @@
 package net.kindeditor.util;
 
+import net.kindeditor.generator.PathGenerator;
+
 /**
  * Constants used in kind-file-manager, most of them are configure file's property names.
  * @author luyanfei
@@ -47,5 +49,13 @@ public interface Constants {
 	 */
 	public static final String PATH_GENERATOR = "path_generator";
 	public static final String DEFAULT_PATH_GENERATOR_CLASS = "net.kindeditor.util.DateBasedPathGenerator";
+	/**
+	 * ResourceBundle property name for upload_size_exceeded.
+	 */
+	public static final String MSG_UPLOAD_EXCEEDED = "upload_size_exceeded";
+	/**
+	 * ResourceBundle property name for ext_violated.
+	 */
+	public static final String MSG_EXT_VIOLATED = "ext_violated";
 
 }

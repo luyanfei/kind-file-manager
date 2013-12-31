@@ -13,8 +13,8 @@ import javax.servlet.annotation.WebListener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.kindeditor.generator.PathGenerator;
 import net.kindeditor.util.ConstraintChecker;
-import net.kindeditor.util.PathGenerator;
 import static net.kindeditor.util.Constants.*;
 
 /**

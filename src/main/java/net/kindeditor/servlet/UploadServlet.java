@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,10 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import net.kindeditor.generator.PathGenerator;
 import net.kindeditor.util.ConstraintChecker;
 import net.kindeditor.util.Constants;
-import net.kindeditor.util.PathGenerator;
-
 import static net.kindeditor.util.Constants.*;
 
 @WebServlet(urlPatterns = "/kindeditor/upload.do")
@@ -34,7 +34,7 @@ public class UploadServlet extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html; charset=UTF-8");
+		response.setContentType("application/json; charset=UTF-8");
 		PrintWriter out = response.getWriter();
 
 		final ServletContext servletContext = request.getServletContext();
@@ -50,20 +50,22 @@ public class UploadServlet extends HttpServlet {
 
 		PathGenerator pathGenerator = (PathGenerator) servletContext.getAttribute(SC_PATH_GENERATOR);
 		
+		ResourceBundle bundle = ResourceBundle.getBundle("messages", request.getLocale());
+		
 		Collection<Part> parts = request.getParts();
 		for (Part part : parts) {
 			String fileName = extractFileName(part);
 			if(fileName == null) continue;
 			// 检查文件大小
 			if (!checker.checkSizeLimit(part.getSize())) {
-				out.println(buildErrorMessage("Upload size limit exceeded."));
+				out.println(buildErrorMessage(bundle.getString(MSG_UPLOAD_EXCEEDED)));
 				return;
 			}
 			// 检查扩展名
 			String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1)
 					.toLowerCase();
 			if( !checker.checkFileExtension(subdir, fileExt) ) {
-				out.println(buildErrorMessage("File extension constraint violated."));
+				out.println(buildErrorMessage(bundle.getString(MSG_EXT_VIOLATED)));
 				return;
 			}
 
