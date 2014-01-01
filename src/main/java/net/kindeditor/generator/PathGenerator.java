@@ -3,9 +3,9 @@ package net.kindeditor.generator;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Developer can provide his own PathGenerator through implement this interface.
- * For self provided PathGenerator to work, an entry of "path_generator" should be added 
- * in kindmanager.properties.
+ * Interface to generate file path when a file is uploaded to server.  
+ * The default PathGenerator implemetation is {@link DateBasedPathGenerator}.
+ * Other implementation should be set in kindmanager.properties.
  * @author luyanfei
  *
  */

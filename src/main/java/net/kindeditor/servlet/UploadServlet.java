@@ -22,6 +22,11 @@ import net.kindeditor.util.ConstraintChecker;
 import net.kindeditor.util.Constants;
 import static net.kindeditor.util.Constants.*;
 
+/**
+ * Handle file upload request. This servlet use MultipartConfig in Servlet 3.0 Specification.
+ * @author luyanfei
+ *
+ */
 public class UploadServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

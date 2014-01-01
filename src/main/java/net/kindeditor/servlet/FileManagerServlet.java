@@ -17,6 +17,11 @@ import net.kindeditor.util.ConstraintChecker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Process directory or file request from kind editor.
+ * @author luyanfei
+ *
+ */
 public class FileManagerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

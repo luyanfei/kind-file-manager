@@ -13,7 +13,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Represents json object return to kind editor from FileManagerServlet.
+ * Represents FileManager's current position. This class is used by Jackson ObjectMapper to generate
+ * json response.
  * @author luyanfei
  *
  */
@@ -99,6 +100,11 @@ public class FileManagerContext {
 		}
 	}
 	
+	/**
+	 * Sort file list in current position by order.
+	 * @param order
+	 * 		order parameter in request.
+	 */
 	public void sortFileList(String order) {
 		order = order != null ? order.toLowerCase() : "name";
 		if("size".equals(order)) {

@@ -21,7 +21,6 @@ import javax.servlet.ServletException;
 public class ConstraintChecker {
 	private static final String DEFAULT_SUBDIRECTORY = "image";
 	private final Map<String, List<String>> extsMap = new HashMap<String, List<String>>();
-	private final long SIZE_LIMIT;
 
 	public ConstraintChecker(Properties properties) {
 		String imgExts = properties.getProperty(IMG_DIR_EXT);
@@ -32,9 +31,19 @@ public class ConstraintChecker {
 		extsMap.put(properties.getProperty(MEDIA_DIR), Arrays.asList(mediaExts.split(",")));
 		String flashExts = properties.getProperty(FLASH_DIR_EXT);
 		extsMap.put(properties.getProperty(FLASH_DIR), Arrays.asList(flashExts.split(",")));
-		SIZE_LIMIT = new Long(properties.getProperty(UPLOAD_FILE_SIZE_LIMIT));
 	}
 
+	/**
+	 * Check subdirectory's existence.
+	 * @param rootPath
+	 * 		Upload root path.
+	 * @param subdir
+	 * 		Subdirectory in root path.
+	 * @return
+	 * 		File object of the subdirectory.
+	 * @throws ServletException
+	 * 		Subdirectory doesn't exist or is not a directory.
+	 */
 	public File checkSubDirectory(String rootPath, String subdir)
 			throws ServletException {
 		subdir = subdir == null ? DEFAULT_SUBDIRECTORY : subdir;
@@ -44,11 +53,16 @@ public class ConstraintChecker {
 		}
 		return subDirectory;
 	}
-
-	public boolean checkSizeLimit(long size) {
-		return size <= SIZE_LIMIT;
-	}
 	
+	/**
+	 * Check weather ext is in subdir's allowed exts list.
+	 * @param subdir
+	 * 		Subdirectory to be checked.
+	 * @param ext
+	 * 		File's extension.
+	 * @return
+	 * 		true if ext is permitted in this subdir, otherwise return false.
+	 */
 	public boolean checkFileExtension(String subdir, String ext) {
 		if(subdir == null || ext == null)
 			return false;
