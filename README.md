@@ -57,7 +57,7 @@ Then kind editor should initialized with correct uploadJson and fileManagerJson 
 		});
 	</script>
 ```
-"/kindeditor/upload.do" is used for accpet file upload, and "/kindeditor/filemanager.do" is used for support client file manager. These two url can be changed by kindmanager.properties. Caution: All kindeditor's static javascript or css file can only be accessed through url beginned with "kindeditor/", this cann't be changed by configuration file.
+"/kindeditor/upload.do" is used for accpet file upload, and "/kindeditor/filemanager.do" is used for support client file manager. These two urls can be changed by kindmanager.properties. Caution: All kindeditor's static javascript or css files can only be accessed through url begin with "kindeditor/", this cann't be changed by configuration file.
 
 At last, you should add textarea element in your page:
 ```
