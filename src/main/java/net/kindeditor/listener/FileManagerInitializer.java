@@ -159,7 +159,8 @@ public class FileManagerInitializer implements ServletContextListener {
 		Properties userProperties = new Properties();
 		try {
 			properties.load(defaultConfig);
-			userProperties.load(config);
+			if(config != null)
+				userProperties.load(config);
 			properties.putAll(userProperties);
 		} catch (IOException e) {
 			e.printStackTrace();
